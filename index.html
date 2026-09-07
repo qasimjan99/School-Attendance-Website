@@ -1,0 +1,135 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>School Attendance Manager</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container app py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="fw-bold mb-1">School Attendance Manager</h2>
+        <div class="text-secondary">Class/Section wise attendance â€” 5th-A, 5th-B, 9th-A, etc.</div>
+      </div>
+      <span class="badge text-bg-primary section-pill mt-2 mt-md-0">September 2026 data structure</span>
+    </div>
+
+    <div class="card p-4 mb-4">
+      <h5 class="fw-bold">1. Upload Excel Master File</h5>
+      <p class="text-secondary mb-2">Your Excel can contain separate sheets such as <b>5th-A, 5th-B, 6th-A ...
+          9th-F</b>. The system reads each sheet separately.</p>
+      <input type="file" id="excelFile" class="form-control" accept=".xlsx,.xls">
+      <div class="mt-3 d-flex gap-2 flex-wrap">
+        <button class="btn btn-primary" onclick="loadExcel()">Load Excel</button>
+        <button class="btn btn-outline-secondary" onclick="useBuiltIn()">Use Uploaded Demo Data</button>
+      </div>
+      <div id="fileStatus" class="mt-3"></div>
+    </div>
+
+    <div class="card p-4 mb-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-5">
+          <label class="form-label fw-semibold">Select Class / Section</label>
+          <select id="sectionSelect" class="form-select" onchange="selectSection()"></select>
+        </div>
+        <div class="col-md-7">
+          <div class="alert alert-info mb-0">
+            <b>Important:</b> Attendance is calculated only for the selected section. 5th-A and 5th-B never mix.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-4 mb-4">
+      <h5 class="fw-bold">2. Enter Absent Students S.No</h5>
+      <p class="text-secondary">Enter one absent student's S.No per line. Duplicate S.No values are ignored.</p>
+      <textarea id="snoInput" class="form-control mb-3" placeholder="Example:
+    1
+    2
+    3"></textarea>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-success" onclick="generateAttendance()">Generate Attendance</button>
+        <button class="btn btn-outline-secondary" onclick="clearEntry()">Clear</button>
+        <button class="btn btn-outline-danger" onclick="resetAll()">Reset App</button>
+      </div>
+      <div id="warnings" class="mt-3"></div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="stat">
+          <div>Total Students</div>
+          <h3 id="total">0</h3>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat">
+          <div class="text-success">Present</div>
+          <h3 class="text-success" id="present">0</h3>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat">
+          <div class="text-danger">Absent</div>
+          <h3 class="text-danger" id="absent">0</h3>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat">
+          <div>Unknown S.No</div>
+          <h3 id="unknown">0</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-4 mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h5 class="fw-bold mb-0">Present List â€” <span id="presentTitle">-</span></h5>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-sm btn-success" onclick="exportSection('present')">Download Present Excel</button>
+          <button class="btn btn-sm btn-outline-dark" onclick="downloadPDF('present')">PDF Download</button>
+        </div>
+      </div>
+      <div class="table-wrap mt-3">
+        <table class="table table-hover align-middle" id="presentTable"></table>
+      </div>
+    </div>
+
+    <div class="card p-4 mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h5 class="fw-bold mb-0">Absent List â€” <span id="absentTitle">-</span></h5>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-sm btn-danger" onclick="exportSection('absent')">Download Absent Excel</button>
+          <button class="btn btn-sm btn-outline-dark" onclick="downloadPDF('absent')">PDF Download</button>
+        </div>
+      </div>
+      <div class="table-wrap mt-3">
+        <table class="table table-hover align-middle" id="absentTable"></table>
+      </div>
+    </div>
+
+    <div class="card p-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h5 class="fw-bold mb-0">Complete Attendance Report</h5>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-dark" onclick="exportComplete()">Download Complete Excel</button>
+          <button class="btn btn-outline-dark" onclick="downloadPDF('complete')">PDF Download</button>
+        </div>
+      </div>
+      <p class="text-secondary mt-2 mb-0">Creates one Excel file for the selected section with separate <b>Present</b>
+        and <b>Absent</b> sheets.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
