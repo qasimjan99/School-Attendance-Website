@@ -1,0 +1,111 @@
+﻿body{background:#f5f7fb}.app{max-width:1250px}.card{border:0;border-radius:16px;box-shadow:0 4px 18px rgba(0,0,0,.07)}
+.stat{border-radius:14px;background:#fff;padding:18px;height:100%}.stat h3{font-weight:800;margin:4px 0 0}
+.table-wrap{max-height:430px;overflow:auto}.sticky-top{z-index:2}
+textarea{min-height:180px}.section-pill{font-size:.8rem}
+
+
+/************************* Dashboard page ***********************/
+
+/* General Page Styling */
+body {
+    background-color: #333333; /* Dark Grey Background */
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    margin: 0;
+}
+
+/* Container */
+.dashboard-container {
+    width: 100%;
+    max-width: 1000px;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Logo & Text Styling */
+.school-logo {
+    width: 220px;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.school-title {
+    font-weight: 900;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.school-address {
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 35px;
+}
+
+.app-heading {
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 50px;
+}
+
+/* Card Base Styles */
+.dashboard-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 180px;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+}
+
+.dashboard-card i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+/* Card Color Variants */
+.card-daily {
+    background-color: #4a90e2; /* Blue */
+}
+
+.card-monthly {
+    background-color: #8e8e8e; /* Grey */
+    color: #000000;
+}
+
+.card-monthly:hover {
+    color: #000000;
+}
+
+.card-award {
+    background-color: #8db5e7; /* Light Blue */
+    color: #000000;
+}
+
+.card-award:hover {
+    color: #000000;
+}
