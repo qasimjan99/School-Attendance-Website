@@ -1,0 +1,349 @@
+﻿#award-list-page.monthly-attendance-page .aw-data-table .col-day   { width: 20px; min-width: 20px; }
+body{background:#f5f7fb}.app{max-width:1250px}.card{border:0;border-radius:16px;box-shadow:0 4px 18px rgba(0,0,0,.07)}
+.stat{border-radius:14px;background:#fff;padding:18px;height:100%}.stat h3{font-weight:800;margin:4px 0 0}
+.table-wrap{max-height:430px;overflow:auto}.sticky-top{z-index:2}
+textarea{min-height:180px}.section-pill{font-size:.8rem}
+
+.home-btn {
+  position: fixed;
+  top: 16px;
+  left: 20px;
+  z-index: 10;
+  padding: 8px 18px;
+  color: #fff;
+  background: #0d6efd;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
+}
+
+.home-btn:hover {
+  color: #fff;
+  background: #0b5ed7;
+}
+
+
+/************************* Dashboard page ***********************/
+
+/* General Page Styling */
+body {
+    background-color: #333333; /* Dark Grey Background */
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    margin: 0;
+}
+
+/* Container */
+.dashboard-container {
+    width: 100%;
+    max-width: 1000px;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Logo & Text Styling */
+.school-logo {
+    width: 220px;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.school-title {
+    font-weight: 900;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.school-address {
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 35px;
+}
+
+.app-heading {
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 50px;
+}
+
+/* Card Base Styles */
+.dashboard-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 180px;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+}
+
+.dashboard-card i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+/* Card Color Variants */
+.card-daily {
+    background-color: #4a90e2; /* Blue */
+}
+
+.card-monthly {
+    background-color: #8e8e8e; /* Grey */
+    color: #000000;
+}
+
+.card-monthly:hover {
+    color: #000000;
+}
+
+.card-award {
+    background-color: #8db5e7; /* Light Blue */
+    color: #000000;
+}
+
+.card-award:hover {
+    color: #000000;
+}
+
+
+
+
+
+
+
+
+/************************Award List Styles **************************/
+* {
+  box-sizing: border-box;
+}
+
+#award-list-page {
+  margin: 0;
+  padding: 30px 40px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+/* Header & Home Button */
+#award-list-page .aw-page-header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+#award-list-page .aw-page-header h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+#award-list-page .aw-btn-home {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 8px 22px;
+  color: #ffffff;
+  background: linear-gradient(to bottom, #4a82e4, #2b62ba);
+  border: 1px solid #1c4b9b;
+  border-radius: 6px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#award-list-page .aw-btn-home:hover {
+  background: #1e52aa;
+}
+
+/* Form Area Styles */
+#award-list-page .aw-form-area {
+  width: 320px;
+  margin-bottom: 25px;
+}
+
+#award-list-page .aw-field-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+#award-list-page .aw-field-group label {
+  width: 75px;
+  font-size: 16px;
+  color: #000;
+}
+
+#award-list-page .aw-field-group .aw-input-control {
+  width: 230px;
+  height: 28px;
+  border: 1px solid #0f2b5c;
+  padding: 2px 6px;
+  font-size: 15px;
+  outline: none;
+}
+
+#award-list-page .aw-list-title {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #000;
+}
+
+.monthly-pdf-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.monthly-pdf-btn {
+  margin: 0;
+}
+
+/* Table Wrapper & Styling */
+#award-list-page .aw-table-wrapper {
+  overflow-x: auto;
+}
+
+#award-list-page .aw-data-table {
+  width: 100%;
+  max-width: 800px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+}
+
+#award-list-page .aw-data-table th,
+#award-list-page .aw-data-table td {
+  border: 1px solid #000000;
+  padding: 8px;
+  vertical-align: middle;
+}
+
+/* Table Header (Yellow Background) */
+#award-list-page .aw-data-table th {
+  background-color: #ffc000;
+  color: #000000;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  height: 36px;
+}
+
+/* Column Widths */
+#award-list-page .aw-data-table .col-sno   { width: 55px; }
+#award-list-page .aw-data-table .col-id    { width: 70px; }
+#award-list-page .aw-data-table .col-name  { width: 180px; }
+#award-list-page .aw-data-table .col-fname { width: 170px; }
+#award-list-page .aw-data-table .col-sig   { width: 160px; }
+#award-list-page .aw-data-table .col-marks { width: 105px; }
+
+/* Monthly attendance table only */
+#award-list-page.monthly-attendance-page .aw-table-wrapper {
+  width: 100%;
+}
+
+#award-list-page.monthly-attendance-page .aw-data-table {
+  width: max-content;
+  min-width: 100%;
+  max-width: none;
+  font-size: 12px;
+  background: #ffffff;
+}
+
+#award-list-page.monthly-attendance-page .aw-data-table th {
+  font-size: 12px;
+  height: 28px;
+  padding: 3px 2px;
+}
+
+#award-list-page.monthly-attendance-page .aw-data-table .col-sno   { width: 34px; }
+#award-list-page.monthly-attendance-page .aw-data-table .col-id    { width: 34px; }
+#award-list-page.monthly-attendance-page .aw-data-table .col-name  { width: 98px; }
+#award-list-page.monthly-attendance-page .aw-data-table .col-fname { width: 98px; }
+#award-list-page.monthly-attendance-page .aw-data-table .col-day   { width: 20px; min-width: 20px; }
+
+#award-list-page.monthly-attendance-page .aw-data-table td {
+  height: 40px;
+  padding: 2px 3px;
+  overflow: hidden;
+  word-break: normal;
+}
+
+#award-list-page.monthly-attendance-page .aw-data-table td.sunday-cell {
+  width: 20px;
+  padding: 0;
+  background: #000000;
+  text-align: center;
+  vertical-align: middle;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 16px;
+  font-style: italic;
+}
+
+#award-list-page.monthly-attendance-page .aw-data-table td.absent-cell {
+  background: #dc3545;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Alignment */
+#award-list-page .aw-data-table td:nth-child(1),
+#award-list-page .aw-data-table td:nth-child(2) {
+  text-align: center;
+}
+
+#award-list-page .aw-data-table td:nth-child(3),
+#award-list-page .aw-data-table td:nth-child(4) {
+  text-align: left;
+  line-height: 1.3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #award-list-page {
+    padding: 15px;
+  }
+  
+  #award-list-page .aw-btn-home {
+    position: static;
+    display: inline-block;
+    margin-bottom: 15px;
+  }
+
+  #award-list-page .aw-data-table {
+    min-width: 700px;
+  }
+
+  #award-list-page.monthly-attendance-page .aw-data-table {
+    min-width: 865px;
+  }
+}
