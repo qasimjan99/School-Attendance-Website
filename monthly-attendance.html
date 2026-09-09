@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Award List</title>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="award-list-page" class="monthly-attendance-page">
+
+    <!-- Main Side-by-Side Container -->
+    <div class="aw-main-container">
+
+        <!-- Left Panel (Home, Header, Form, Label) -->
+        <div class="aw-left-panel">
+            <div class="aw-header-box">
+                <a href="index.html" class="aw-btn-home">Home</a>
+                <h1 class="aw-title">Students Monthly Attendance Record</h1>
+            </div>
+
+            <section class="aw-form-area">
+                <div class="aw-field-group">
+                    <label for="awClassName">Class:</label>
+                    <select id="awClassName" class="aw-input-control"></select>
+                </div>
+
+                <div class="aw-field-group">
+                    <label for="awSectionName">Section:</label>
+                    <select id="awSectionName" class="aw-input-control"></select>
+                </div>
+
+                <div class="aw-field-group">
+                                     <label for="awAwardDate">Month:</label>
+                    <input type="month" id="awAwardDate" class="aw-input-control">
+                </div>
+            </section>
+
+            <div class="aw-list-title">Students Monthly Attendance Record</div>
+        </div>
+
+        <!-- Right Panel (Table with Scroll) -->
+        <div class="aw-right-panel">
+            <div class="monthly-pdf-toolbar">
+                <button type="button" class="btn btn-dark monthly-pdf-btn" onclick="downloadMonthlyPDF()">
+                    PDF Download
+                </button>
+            </div>
+            <div class="aw-table-wrapper">
+                <table class="aw-data-table">
+                    <thead>
+                        <tr id="monthly-table-header"></tr>
+                    </thead>
+                    <tbody id="monthly-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="shared-data.js"></script>
+    <script>
+        const fallbackMonthlyStudents = [
+            [1, "4783", "MUHAMMAD AWAIS", "FAZAL RABI"],
+            [2, "4812", "MUHAMMAD SHAHZEB", "RAHIM SHAH"],
+            [3, "4814", "MUHAMMAD TALHA", "SHOUKAT KHAN"],
+            [4, "4815", "AMEEN KHAN", "MOHAMMAD TARIQ"],
+            [5, "4816", "SYED HABIB SHAH GILLANI", "SYED IZHAR ALI SHAH GILLANI"],
+            [6, "4817", "MUHAMMAD JUNAID", "IRFAN ULLAH"],
+            [7, "4818", "MUHAMMAD HASSNAT SUBHAN", "SUBHAN ULLAH"]
+        ];
+        const sundayDays = new Set([5, 12, 19, 26]);
+        const header = document.getElementById("monthly-table-header");
+        const body = document.getElementById("monthly-table-body");
+        const monthlyClassInput = document.getElementById("awClassName");
+        const monthlySectionInput = document.getElementById("awSectionName");
+        const monthlyInput = document.getElementById("awAwardDate");
+
+        function escapeMonthlyValue(value) {
+            return String(value ?? "").replace(/[&<>"']/g, character => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+            }[character]));
+        }
+
+        function setCurrentMonth() {
+            if (!monthlyInput.value) monthlyInput.value = new Date().toISOString().slice(0, 7);
+        }
+
+        function renderMonthlySection() {
+            const data = loadSharedAttendanceData();
+            populateSharedSelectors(data, monthlyClassInput, monthlySectionInput);
+            const section = data && Object.keys(data).length
+                ? findSharedSection(data, monthlyClassInput.value, monthlySectionInput.value)
+                : "";
+            const monthlyStudents = section ? data[section] : fallbackMonthlyStudents.map(student => ({
+                sno: student[0], id: student[1], name: student[2], father: student[3]
+            }));
+
+            if (section) setSharedSectionInputs(section, "awClassName", "awSectionName");
+            const month = monthlyInput.value || new Date().toISOString().slice(0, 7);
+            const [year, monthNumber] = month.split("-").map(Number);
+            const daysInMonth = new Date(year, monthNumber, 0).getDate();
+            const dailyAttendance = loadDailyAttendance()[section] || {};
+            header.innerHTML = `
+                <th class="col-sno">S.No</th>
+                <th class="col-id">I.D</th>
+                <th class="col-name">Name</th>
+                <th class="col-fname">F/Name</th>
+                ${Array.from({ length: daysInMonth }, (_, index) => `<th class="col-day">${index + 1}</th>`).join("")}
+            `;
+            body.innerHTML = monthlyStudents.map(student => `
+            <tr>
+                <td>${escapeMonthlyValue(student.sno)}</td>
+                <td>${escapeMonthlyValue(student.id)}</td>
+                <td>${escapeMonthlyValue(student.name)}</td>
+                <td>${escapeMonthlyValue(student.father)}</td>
+                ${Array.from({ length: daysInMonth }, (_, index) => {
+                    const day = index + 1;
+                    const date = `${month}-${String(day).padStart(2, "0")}`;
+                    const sunday = new Date(year, monthNumber - 1, day).getDay() === 0;
+                    const record = dailyAttendance[date];
+                    const status = record?.absent?.includes(String(student.sno)) ? "A"
+                        : record?.present?.includes(String(student.sno)) ? "P" : "";
+                    return `<td class="${sunday ? "sunday-cell" : ""}">${sunday ? "" : status}</td>`;
+                }).join("")}
+            </tr>
+            `).join("");
+        }
+
+        function downloadMonthlyPDF() {
+            if (!window.jspdf || typeof window.jspdf.jsPDF !== "function") {
+                alert("PDF library could not be loaded. Check your internet connection and try again.");
+                return;
+            }
+
+            const data = loadSharedAttendanceData();
+            const section = data && Object.keys(data).length
+                ? findSharedSection(data, monthlyClassInput.value, monthlySectionInput.value)
+                : "";
+            const students = section ? data[section] : fallbackMonthlyStudents.map(student => ({
+                sno: student[0], id: student[1], name: student[2], father: student[3]
+            }));
+            const month = monthlyInput.value || new Date().toISOString().slice(0, 7);
+            const [year, monthNumber] = month.split("-").map(Number);
+            const daysInMonth = new Date(year, monthNumber, 0).getDate();
+            const dailyAttendance = loadDailyAttendance()[section] || {};
+            const monthLabel = new Date(year, monthNumber - 1, 1).toLocaleDateString("en-GB", {
+                month: "long", year: "numeric"
+            });
+            const dayHeaders = Array.from({ length: daysInMonth }, (_, index) => String(index + 1));
+            const rows = students.map(student => [
+                student.sno,
+                student.id,
+                student.name,
+                student.father,
+                ...Array.from({ length: daysInMonth }, (_, index) => {
+                    const day = index + 1;
+                    const date = `${month}-${String(day).padStart(2, "0")}`;
+                    const sunday = new Date(year, monthNumber - 1, day).getDay() === 0;
+                    const record = dailyAttendance[date];
+                    return sunday ? "" : record?.absent?.includes(String(student.sno)) ? "A"
+                        : record?.present?.includes(String(student.sno)) ? "P" : "";
+                })
+            ]);
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+            const rowsPerPage = 16;
+            const fixedColumnsWidth = 96;
+            const availableTableWidth = pdf.internal.pageSize.getWidth() - 4 - 6;
+            const dayColumnWidth = (availableTableWidth - fixedColumnsWidth) / daysInMonth;
+            const columnStyles = {
+                0: { cellWidth: 12 },
+                1: { cellWidth: 14 },
+                2: { cellWidth: 35, halign: "left", overflow: "linebreak" },
+                3: { cellWidth: 35, halign: "left", overflow: "linebreak" }
+            };
+            for (let day = 1; day <= daysInMonth; day++) {
+                columnStyles[day + 3] = { cellWidth: dayColumnWidth };
+            }
+            for (let start = 0; start < rows.length; start += rowsPerPage) {
+                if (start > 0) pdf.addPage();
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(15);
+                
+                pdf.text("JAMAL INTERNATIONAL DEGREE COLLEGE & SCHOOL SYSTEM", 148.5, 8, { align: "center" });
+                pdf.setFontSize(13);
+                pdf.text("Students Monthly Attendance Record", 148.5, 14, { align: "center" });
+                pdf.setFontSize(10);
+                pdf.text(`${section || "Attendance"} - ${monthLabel}`, 148.5, 20, { align: "center" });
+                pdf.autoTable({
+                    startY: 25,
+                    margin: { left: 2, right: 2, bottom: 8 },
+                    head: [["S.No", "I.D", "Name", "F/Name", ...dayHeaders]],
+                    body: rows.slice(start, start + rowsPerPage),
+                    theme: "grid",
+                    styles: {
+                        font: "helvetica",
+                        fontSize: 9,
+                        cellPadding: 1.6,
+                        textColor: [0, 0, 0],
+                        lineColor: [0, 0, 0],
+                        lineWidth: 0.15,
+                        halign: "center",
+                        valign: "middle",
+                        minCellHeight: 0
+                    },
+                    headStyles: {
+                        fillColor: [255, 192, 0],
+                        textColor: [0, 0, 0],
+                        fontStyle: "bold",
+                        fontSize: 9,
+                        minCellHeight: 9
+                    },
+                    bodyStyles: { minCellHeight: 9.2 },
+                    columnStyles,
+                    didParseCell: hookData => {
+                        if (hookData.section === "head" && hookData.column.index === 0) {
+                            hookData.cell.styles.fontSize = 7.5;
+                            hookData.cell.styles.cellPadding = 0.5;
+                            hookData.cell.styles.overflow = "hidden";
+                        }
+                        if (hookData.section === "head" && hookData.column.index >= 4) {
+                            hookData.cell.styles.fontSize = 7;
+                            hookData.cell.styles.cellPadding = 0.5;
+                            hookData.cell.styles.overflow = "hidden";
+                        }
+                        if (hookData.section === "body" && (hookData.column.index === 2 || hookData.column.index === 3)) {
+                            hookData.cell.styles.fontSize = 8;
+                            hookData.cell.styles.overflow = "linebreak";
+                            hookData.cell.styles.halign = "left";
+                        }
+                        if (hookData.section === "body" && hookData.column.index >= 4) {
+                            const day = hookData.column.index - 3;
+                            const sunday = new Date(year, monthNumber - 1, day).getDay() === 0;
+                            if (hookData.cell.raw === "A") {
+                                hookData.cell.styles.fillColor = [220, 53, 69];
+                                hookData.cell.styles.textColor = [255, 255, 255];
+                                hookData.cell.styles.fontStyle = "bold";
+                            } else if (sunday) {
+                                hookData.cell.styles.fillColor = [0, 0, 0];
+                                hookData.cell.styles.textColor = [255, 255, 255];
+                            }
+                        }
+                    }
+                });
+            }
+            pdf.save(`${(section || "Monthly-Attendance").replace(/[\\/:*?"<>|]/g, "-")}_${month}.pdf`);
+        }
+
+        monthlyClassInput.addEventListener("change", renderMonthlySection);
+        monthlySectionInput.addEventListener("change", renderMonthlySection);
+        monthlyInput.addEventListener("change", renderMonthlySection);
+        setCurrentMonth();
+        renderMonthlySection();
+    </script>
+</body>
+
+</html>
